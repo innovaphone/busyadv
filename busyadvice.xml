@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<voicemail>
+<!-- innovaphone busyadvice == innovaphone srl kwa 12/2010 -->
+	<function define="Main">
+		<pbx-getcallinfo out-cgpn="$cgpn" out-cdpn="$cdpn" out-leg2="$leg2" />
+		<event type="timer" name="vbguard">
+	       		<pbx-disc/>
+		</event>
+	        <timer name="vbguard" sec="6"/>  
+		<lib-strlen out="$res" string="$leg2"/> 
+		<if cond="$res">
+			<assign out="$message" value="you where busy,      please call me back"/>
+			<store-cookie root="" name="message.txt" out="$storedmessage"/>
+			<if cond="$storedmessage">
+				<assign out="$message" value="$storedmessage"/>
+			</if>
+			<pbx-im cgpn="$cgpn" e164="$leg2" text="$message"/> 
+			<store-cookie root="" name="operator.txt" out="$operator"/>
+			<if cond="$operator">
+				<pbx-fwd e164="$operator" out-cause="$cause"/>
+			</if>
+			<pbx-disc/>
+		</if>
+	</function>
+</voicemail>
+
+
+<!-- Busy Advice wiki-src/xml/BusyAdv 1,0,0,0 (C) innovaphone AG 2010-2011 -->
